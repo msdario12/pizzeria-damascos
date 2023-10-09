@@ -1,5 +1,5 @@
 import ProductCard from "@/components/ProductCard/ProductCard";
-
+import pizzas from "@/exampleData";
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col container  bg-black text-white">
@@ -10,6 +10,9 @@ export default function Home() {
       <section className="min-h-screen">
         <h1 className="text-3xl font-bold mb-5">Lista de variedades</h1>
         <ProductCard />
+        {pizzas.map((el) => (
+          <ProductCard pizza={el}></ProductCard>
+        ))}
       </section>
     </main>
   );
