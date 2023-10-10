@@ -2,10 +2,22 @@
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { addOneItemLS, removeOneItemLS } from "@/lib/utils";
+import { useState, useEffect } from "react";
+import { addOneItemLS, getItemFromLS, removeOneItemLS } from "@/lib/utils";
 export default function ProductCard({ pizza }) {
   const [countProduct, setCountProduct] = useState(0);
+  if (!pizza) {
+    return "";
+  }
+  useEffect(() => {
+    const localItem = getItemFromLS("cart");
+    if (localItem) {
+      const item = localItem.find((el) => el.id === pizza.id);
+      if (item) {
+        setCountProduct(item.count);
+      }
+    }
+  }, []);
   const handlePlusItem = () => {
     setCountProduct((prev) => prev + 1);
     addOneItemLS(pizza.id);
@@ -17,9 +29,6 @@ export default function ProductCard({ pizza }) {
     }
     removeOneItemLS(pizza.id);
   };
-  if (!pizza) {
-    return "";
-  }
   const { name, description, price, img } = pizza;
   return (
     <Card className="pt-3">
