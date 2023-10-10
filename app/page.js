@@ -1,7 +1,6 @@
 import Cart from "@/components/Cart/Cart";
-import ProductCard from "@/components/ProductCard/ProductCard";
+import ProductList from "@/components/ProductList/ProductList";
 import CartContext from "@/context/cartContext";
-import pizzas from "@/exampleData";
 export default function Home() {
   return (
     <CartContext>
@@ -11,11 +10,7 @@ export default function Home() {
           <h3>Las mejores pizzas listas para hornear.</h3>
         </section>
         <section className="min-h-screen">
-          <h1 className="text-3xl font-bold mb-5">Lista de variedades</h1>
-          <ProductCard />
-          {pizzas.map((el) => (
-            <ProductCard pizza={el}></ProductCard>
-          ))}
+          <ProductList />
         </section>
         <aside>
           <Cart />
