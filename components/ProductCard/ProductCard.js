@@ -4,7 +4,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { addOneItemLS, getItemFromLS, removeOneItemLS } from "@/lib/utils";
-export default function ProductCard({ pizza, addItem }) {
+export default function ProductCard({
+  pizza,
+  addItem,
+  removeItem,
+  defineItem,
+}) {
   const [countProduct, setCountProduct] = useState(0);
   if (!pizza) {
     return "";
@@ -15,6 +20,7 @@ export default function ProductCard({ pizza, addItem }) {
       const item = localItem.find((el) => el.id === pizza.id);
       if (item) {
         setCountProduct(item.count);
+        defineItem(pizza.id, Number(item.count), Number(pizza.price));
       }
     }
   }, []);
@@ -29,6 +35,7 @@ export default function ProductCard({ pizza, addItem }) {
       setCountProduct(0);
     }
     removeOneItemLS(pizza.id);
+    removeItem(pizza.id);
   };
   const { name, description, price, img } = pizza;
   return (

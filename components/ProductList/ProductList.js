@@ -8,7 +8,6 @@ export default function ProductList() {
   const { cartList, setCartList } = useCartList();
 
   const addOneItemToCart = (id, price) => {
-    console.log(cartList);
     const foundedItemIndex = cartList.findIndex((el) => el.id === id);
     if (foundedItemIndex === -1) {
       // Item not found
@@ -24,13 +23,35 @@ export default function ProductList() {
         }
       }),
     );
+    console.log(cartList);
   };
+  const removeOneItemFromCart = (id) => {
+    setCartList((prev) =>
+      prev.map((el) => {
+        if (el.id === id) {
+          return { ...el, count: el.count - 1 };
+        } else {
+          return el;
+        }
+      }),
+    );
+    console.log(cartList);
+  };
+  const defineCountOfItemToCart = (id, count, price) => {
+    setCartList((prev) => [...prev, { id, count, price }]);
+  };
+
   return (
     <div>
       <h1 className="text-3xl font-bold mb-5">Lista de variedades</h1>
       <ProductCard />
       {pizzas.map((el) => (
-        <ProductCard pizza={el} addItem={addOneItemToCart}></ProductCard>
+        <ProductCard
+          pizza={el}
+          removeItem={removeOneItemFromCart}
+          addItem={addOneItemToCart}
+          defineItem={defineCountOfItemToCart}
+        ></ProductCard>
       ))}
     </div>
   );
