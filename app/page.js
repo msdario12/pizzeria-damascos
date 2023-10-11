@@ -1,5 +1,6 @@
 import Cart from "@/components/Cart/Cart";
 import ProductList from "@/components/ProductList/ProductList";
+import ShoppingCartList from "@/components/ShoppingCartList/ShoppingCartList";
 import CartContext from "@/context/cartContext";
 export default function Home() {
   return (
@@ -15,6 +16,7 @@ export default function Home() {
         <aside>
           <Cart />
         </aside>
+        <ShoppingCartList />
       </main>
     </CartContext>
   );

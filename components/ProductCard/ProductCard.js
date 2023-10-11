@@ -27,7 +27,7 @@ export default function ProductCard({
   const handlePlusItem = () => {
     setCountProduct((prev) => prev + 1);
     addOneItemLS(pizza.id);
-    addItem(pizza.id, pizza.price);
+    addItem(pizza.id, pizza.price, pizza.name);
   };
   const handleMinusItem = () => {
     setCountProduct((prev) => prev - 1);

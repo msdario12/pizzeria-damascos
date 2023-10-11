@@ -18,7 +18,7 @@ export default function Cart() {
     }
   }, [cartList]);
   return (
-    <div className="fixed bottom-4 w-full left-0 h-20">
+    <div className="bottom-4 w-full left-0 h-20">
       <Card className="">
         <CardContent className="flex justify-between items-center">
           <div>

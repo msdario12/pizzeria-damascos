@@ -7,11 +7,11 @@ import useCartList from "@/hooks/useCartList";
 export default function ProductList() {
   const { cartList, setCartList } = useCartList();
 
-  const addOneItemToCart = (id, price) => {
+  const addOneItemToCart = (id, price, name) => {
     const foundedItemIndex = cartList.findIndex((el) => el.id === id);
     if (foundedItemIndex === -1) {
       // Item not found
-      setCartList((prev) => [...prev, { id, count: 1, price }]);
+      setCartList((prev) => [...prev, { id, count: 1, price, name }]);
       return;
     }
     setCartList((prev) =>
@@ -35,10 +35,15 @@ export default function ProductList() {
         }
       }),
     );
-    console.log(cartList);
+    setCartList((prev) => prev.filter((el) => el.count > 0));
   };
   const defineCountOfItemToCart = (id, count, price) => {
-    setCartList((prev) => [...prev, { id, count, price }]);
+    const foundItem = pizzas.find((el) => el.id === id);
+    setCartList((prev) => [
+      ...prev,
+      { id, count, price, name: foundItem.name },
+    ]);
+    setCartList((prev) => prev.filter((el) => el.count > 0));
   };
 
   return (
