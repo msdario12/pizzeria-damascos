@@ -3,29 +3,45 @@ import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
 import useCartList from "@/hooks/useCartList";
+import Link from "next/link";
 export default function Cart() {
   const [totalPrice, setTotalPrice] = useState(0);
   const { cartList, setCartList } = useCartList();
 
   useEffect(() => {
-    if (cartList.length > 0) {
+    if (cartList.length >= 0) {
       setTotalPrice(
         cartList.reduce(
           (acc, current) => acc + current.price * current.count,
-          0,
-        ),
+          0
+        )
       );
     }
   }, [cartList]);
+
+  const generateCartUrl = (cartList) => {
+    const searchParams = new URLSearchParams("");
+    // searchParams.append("test", "prueba");
+    // searchParams.append("list", cartList);
+    cartList.forEach((item, index) =>
+      searchParams.append(index, JSON.stringify(item))
+    );
+    return searchParams.toString();
+  };
+
   return (
-    <div className="bottom-4 w-full left-0 h-20">
-      <Card className="">
-        <CardContent className="flex justify-between items-center">
+    <div className="fixed bottom-0 w-full left-0 z-10">
+      <Card className="rounded">
+        <CardContent className="flex justify-between items-center mt-5">
           <div>
-            <h3>Total</h3>
-            <span>{totalPrice}</span>
+            <h3 className="font text-xl">Total</h3>
+            <span className="font-bold text-3xl">{"$ " + totalPrice}</span>
           </div>
-          <Button>Realizar pedido</Button>
+          <Button>
+            <Link href={"/shopping-cart?" + generateCartUrl(cartList)}>
+              Realizar pedido
+            </Link>
+          </Button>
         </CardContent>
       </Card>
     </div>

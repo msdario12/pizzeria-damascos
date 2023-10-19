@@ -39,7 +39,7 @@ export default function ProductCard({
   };
   const { name, description, price, img } = pizza;
   return (
-    <Card className="pt-3">
+    <Card className="pt-3 my-4">
       <CardContent className="flex items-center justify-between gap-x-5">
         <div className="flex flex-col gap-x-5 justify-between items-center ">
           <Image src={img} width={200} height={200} />
@@ -50,9 +50,9 @@ export default function ProductCard({
           </div>
         </div>
         <div>
-          <h2 className="font-semibold text-2xl">{name}</h2>
+          <h2 className="font-semibold text-xl">{name}</h2>
           <p className="text-sm my-2">{description}</p>
-          <span className="text-3xl font-bold">{"$ " + price}</span>
+          <span className="text-2xl font-bold">{"$ " + price}</span>
         </div>
       </CardContent>
     </Card>

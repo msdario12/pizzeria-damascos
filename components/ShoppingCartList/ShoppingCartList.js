@@ -10,11 +10,17 @@ import {
 } from "@/components/ui/table";
 import useCartList from "@/hooks/useCartList";
 
-export default function ShoppingCartList() {
-  const { cartList } = useCartList();
+export default function ShoppingCartList({ cartList }) {
+  // const { cartList } = useCartList();
+  const totalPrice = cartList.reduce(
+    (acc, curr) => acc + curr.count * curr.price,
+    0
+  );
+  if (!cartList) {
+    return "Sin datos";
+  }
   return (
     <section>
-      <h2>Lista de pedidos</h2>
       <div>
         <Table>
           <TableCaption>Lista de pedidos</TableCaption>
@@ -25,8 +31,8 @@ export default function ShoppingCartList() {
               <TableHead className="text-right">Sub-Total</TableHead>
             </TableRow>
           </TableHeader>
-          {cartList.map((el) => (
-            <TableBody>
+          <TableBody>
+            {cartList.map((el) => (
               <TableRow>
                 <TableCell className="font-medium">{el.name}</TableCell>
                 <TableCell>{el.count}</TableCell>
@@ -34,8 +40,15 @@ export default function ShoppingCartList() {
                   {el.price * el.count}
                 </TableCell>
               </TableRow>
-            </TableBody>
-          ))}
+            ))}
+            <TableRow>
+              <TableCell className="w-[100px]"></TableCell>
+              <TableCell className="w-[100px]">Total: </TableCell>
+              <TableCell className="w-[100px] text-right">
+                {"$" + totalPrice}
+              </TableCell>
+            </TableRow>
+          </TableBody>
         </Table>
       </div>
     </section>

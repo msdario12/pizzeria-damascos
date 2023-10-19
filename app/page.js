@@ -16,7 +16,6 @@ export default function Home() {
         <aside>
           <Cart />
         </aside>
-        <ShoppingCartList />
       </main>
     </CartContext>
   );
