@@ -1,5 +1,6 @@
 "use client";
 import DirectionForm from "@/components/DirectionForm/DirectionForm";
+import { MapLazyComponent } from "@/components/DirectionMap/MapLazyComponent";
 import ShoppingCartList from "@/components/ShoppingCartList/ShoppingCartList";
 import { Button } from "@/components/ui/button";
 import { useSearchParams } from "next/navigation";
@@ -8,7 +9,7 @@ import { useEffect, useState } from "react";
 export default function ShoppingCartPage() {
   const searchParams = useSearchParams();
   const [cartList, setCartList] = useState([]);
-
+  const [position, setPosition] = useState([0, 0]);
   if (cartList.length === 0) {
     searchParams.forEach((item) =>
       setCartList((prev) => [...prev, JSON.parse(item)])
@@ -21,7 +22,8 @@ export default function ShoppingCartPage() {
         {cartList && <ShoppingCartList cartList={cartList} />}
       </section>
       <Button>Realizar Pedidio</Button>
-      <DirectionForm />
+      <DirectionForm setPosition={setPosition} />
+      <MapLazyComponent position={position} />
     </main>
   );
 }

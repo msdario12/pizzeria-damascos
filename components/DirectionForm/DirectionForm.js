@@ -1,204 +1,295 @@
-import { Input } from '@/components/ui/input';
-import { Label } from '@radix-ui/react-label';
-import { Button } from '../ui/button';
+import { Input } from "@/components/ui/input";
+import { Label } from "@radix-ui/react-label";
+import { Button } from "../ui/button";
 import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '@/components/ui/select';
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
-	Form,
-	FormControl,
-	FormDescription,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from '../ui/form';
-import * as Yup from 'yup';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { useEffect, useState } from 'react';
-import { InputWithSuggestions } from './InputWithSuggestions';
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
+import * as Yup from "yup";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useEffect, useState } from "react";
+import { InputWithSuggestions } from "./InputWithSuggestions";
+import { Popover, PopoverTrigger } from "@radix-ui/react-popover";
+import { Card, CardContent } from "../ui/card";
+import { Cross2Icon } from "@radix-ui/react-icons";
 
-const URL_GEO_API = 'https://geocode.maps.co/search?';
+const URL_GEO_API = "https://geocode.maps.co/search?";
 
 const directionSchema = Yup.object({
-	direction: Yup.string().required(),
-	province: Yup.string().required(),
+  direction: Yup.string().required(),
+  province: Yup.string().required(),
 });
 
-export default function DirectionForm() {
-	const form = useForm({
-		resolver: yupResolver(directionSchema),
-		defaultValues: {
-			province: 'Tucuman',
-			department: 'Capital',
-		},
-	});
-	const [departmentList, setDepartmentList] = useState();
-	const [province, setProvince] = useState('Tucuman');
-	const [department, setDepartment] = useState('Capital');
-	const [directionSuggestions, setDirectionSuggestions] = useState([]);
+export default function DirectionForm({ setPosition }) {
+  const form = useForm({
+    resolver: yupResolver(directionSchema),
+    defaultValues: {
+      province: "Tucuman",
+      department: "Capital",
+    },
+  });
+  const [departmentList, setDepartmentList] = useState();
+  const [province, setProvince] = useState("Tucuman");
+  const [department, setDepartment] = useState("Capital");
+  const [directionSuggestions, setDirectionSuggestions] = useState([]);
+  const [direction, setDirection] = useState("");
+  const [openSuggestions, setOpenSuggestions] = useState(true);
+  const [selectedAddress, setSelectedAddress] = useState("");
 
-	function handleSubmit(data) {
-		console.log(data);
-		const direction = String(data.direction);
-		const searchParams = new URLSearchParams();
-		searchParams.append(
-			'q',
-			direction + ' ' + department + ' ' + province + ' ' + 'Argentina'
-		);
-		fetch(URL_GEO_API + String(searchParams))
-			.then((res) => res.json())
-			.then((json) => {
-				console.log(json);
-				setDirectionSuggestions(json);
-			});
-	}
+  function handleSubmit(data) {
+    console.log(data);
+    const direction = String(data.direction);
+    const searchParams = new URLSearchParams();
+    searchParams.append(
+      "q",
+      direction +
+        " " +
+        department
+          .replace(/ /g, "+")
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "") +
+        " " +
+        province +
+        " " +
+        "Argentina"
+    );
+    fetch(URL_GEO_API + String(searchParams))
+      .then((res) => res.json())
+      .then((json) => {
+        console.log(json);
+        setDirectionSuggestions(json);
+      });
+  }
 
-	function getDepartmentBasedInProvince(province) {
-		const URL_API_DEP =
-			'https://apis.datos.gob.ar/georef/api/departamentos?provincia=';
-		fetch(URL_API_DEP + province + '&orden=nombre')
-			.then((res) => res.json())
-			.then((json) => {
-				const names = json.departamentos.map((el) => {
-					return { nombre: el.nombre, id: el.id };
-				});
-				console.log(names);
-				setDepartmentList(names);
-			});
-	}
+  function getDepartmentBasedInProvince(province) {
+    const URL_API_DEP =
+      "https://apis.datos.gob.ar/georef/api/departamentos?provincia=";
+    // Check if the department list exist in localStorage
+    const departmentLocalStorage = localStorage.getItem("department-list");
+    if (!departmentLocalStorage) {
+      console.log("Realiza fetch");
+      fetch(URL_API_DEP + province + "&orden=nombre&max=20")
+        .then((res) => res.json())
+        .then((json) => {
+          const names = json.departamentos.map((el) => {
+            return { nombre: el.nombre, id: el.id };
+          });
+          console.log(names);
+          localStorage.setItem(
+            "department-list",
+            names.map((el) => JSON.stringify(el))
+          );
+          setDepartmentList(names);
+        });
+      return;
+    }
+    console.log(departmentLocalStorage.map((el) => JSON.parse(el)));
+    // setDepartmentList(departmentLocalStorage.map((el) => JSON.parse(el)));
+  }
 
-	function getDirectionSuggestionsBasedOnText(text) {
-		const searchParams = new URLSearchParams();
-		searchParams.append(
-			'q',
-			text + ' ' + department + ' ' + province + ' ' + 'Argentina'
-		);
-		fetch(URL_GEO_API + String(searchParams))
-			.then((res) => res.json())
-			.then((json) => {
-				console.log(json);
-				setDirectionSuggestions(json);
-			});
-	}
+  function getDirectionSuggestionsBasedOnText(text) {
+    const searchParams = new URLSearchParams();
+    searchParams.append(
+      "q",
+      text + " " + department + " " + province + " " + "Argentina"
+    );
+    setDepartmentList([]);
+    fetch(URL_GEO_API + String(searchParams))
+      .then((res) => res.json())
+      .then((json) => {
+        console.log(json);
+        if (json.length === 0) {
+          setDirectionSuggestions([
+            { display_name: "No se encontraron resultados." },
+          ]);
+          return;
+        }
+        setDirectionSuggestions(json);
+      });
+  }
 
-	function handleChangeDirection(e) {
-		console.log(e.target.value);
-	}
+  function handleChangeDirection(e) {
+    console.log(e.target.value);
+    const value = e.target.value;
+    setTimeout(() => {
+      if (value.length <= 3) {
+        setDirectionSuggestions([
+          { display_name: "Ingresa por lo menos 4 letras" },
+        ]);
+        return;
+      }
+      getDirectionSuggestionsBasedOnText(value);
+    }, 2500);
+  }
+  useEffect(() => {
+    console.log(direction);
+    if (direction.length === 0) {
+      setDirectionSuggestions([{ display_name: "Ingresa una dirección" }]);
+      return;
+    }
+    if (direction.length <= 3) {
+      setDirectionSuggestions([
+        { display_name: "Ingresa por lo menos 4 letras" },
+      ]);
+      return;
+    }
+    const timeoutID = setTimeout(() => {
+      getDirectionSuggestionsBasedOnText(direction);
+    }, 2500);
 
-	useEffect(() => {
-		if (!province) {
-			getDepartmentBasedInProvince('Tucuman');
-			return;
-		}
-		getDepartmentBasedInProvince(province);
-	}, [province]);
-	return (
-		<section>
-			<h2>Datos del domicilio</h2>
-			<Form {...form}>
-				<form
-					onSubmit={form.handleSubmit(handleSubmit)}
-					className='w-2/3 space-y-6'>
-					<FormField
-						control={form.control}
-						name='province'
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Provincia</FormLabel>
-								<Select
-									onValueChange={(e) => {
-										field.onChange(e);
-										setProvince(e);
-									}}
-									defaultValue={field.value}>
-									<FormControl>
-										<SelectTrigger>
-											<SelectValue placeholder='Selecciona' />
-										</SelectTrigger>
-									</FormControl>
-									<SelectContent>
-										<SelectItem value='Tucuman'>Tucuman</SelectItem>
-										<SelectItem value='Jujuy'>Jujuy</SelectItem>
-										<SelectItem value='Santiago del Estero'>
-											Santiago del estero
-										</SelectItem>
-									</SelectContent>
-								</Select>
-								<FormDescription>Seleccione su provincia</FormDescription>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name='department'
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Departamento</FormLabel>
-								<Select
-									onValueChange={(e) => {
-										field.onChange(e);
-										setDepartment(e);
-									}}
-									defaultValue={field.value}>
-									<FormControl>
-										<SelectTrigger>
-											<SelectValue placeholder='Selecciona un departamento' />
-										</SelectTrigger>
-									</FormControl>
-									<SelectContent>
-										{departmentList && (
-											<>
-												{departmentList.map((dep) => (
-													<SelectItem key={dep.id} value={dep.nombre}>
-														{dep.nombre}
-													</SelectItem>
-												))}
-												<SelectItem value='load'>Cargar más</SelectItem>
-											</>
-										)}
-									</SelectContent>
-								</Select>
-								<FormDescription>
-									Seleccione un departamento de la lista
-								</FormDescription>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name='direction'
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Dirección</FormLabel>
-								<FormControl>
-									<Input
-										placeholder='Ingrese su dirección'
-										onChange={(e) => {
-											field.onChange(e);
-											handleChangeDirection(e);
-										}}
-										onBlur={(e) => field.onBlur(e)}
-										// {...field}
-									/>
-								</FormControl>
-								<FormDescription>
-									Seleccione su dirección de la lista
-								</FormDescription>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<Button type='submit'>Enviar</Button>
-				</form>
-			</Form>
-		</section>
-	);
+    return () => clearTimeout(timeoutID);
+  }, [direction]);
+
+  useEffect(() => {
+    if (!province) {
+      getDepartmentBasedInProvince("Tucuman");
+      return;
+    }
+    getDepartmentBasedInProvince(province);
+  }, [province]);
+  return (
+    <section>
+      <h2>Datos del domicilio</h2>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(handleSubmit)}
+          className="w-2/3 space-y-6"
+        >
+          <FormField
+            control={form.control}
+            name="province"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Provincia</FormLabel>
+                <Select
+                  onValueChange={(e) => {
+                    field.onChange(e);
+                    setProvince(e);
+                  }}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecciona" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="Tucuman">Tucuman</SelectItem>
+                    <SelectItem value="Jujuy">Jujuy</SelectItem>
+                    <SelectItem value="Santiago del Estero">
+                      Santiago del estero
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormDescription>Seleccione su provincia</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="department"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Departamento</FormLabel>
+                <Select
+                  onValueChange={(e) => {
+                    field.onChange(e);
+                    setDepartment(e);
+                  }}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecciona un departamento" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent className="max-h-52 overflow-y-scroll">
+                    {departmentList && (
+                      <>
+                        {departmentList.map((dep) => (
+                          <SelectItem key={dep.id} value={dep.nombre}>
+                            {dep.nombre}
+                          </SelectItem>
+                        ))}
+                        <SelectItem value="load">Cargar más</SelectItem>
+                      </>
+                    )}
+                  </SelectContent>
+                </Select>
+                <FormDescription>
+                  Seleccione un departamento de la lista
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="direction"
+            render={({ field }) => (
+              <FormItem className="relative">
+                <FormLabel>Dirección</FormLabel>
+                <FormControl>
+                  <Input
+                    type="search"
+                    placeholder="Ingrese su dirección"
+                    value={field.value}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      setDirection(e.target.value);
+                    }}
+                    onBlur={(e) => field.onBlur(e)}
+                    // {...field}
+                  />
+                </FormControl>
+                {openSuggestions ? (
+                  <Card>
+                    <CardContent className="pb-1">
+                      <ul className="my-6 ml-6 list-disc [&>li]:mt-2">
+                        {directionSuggestions.map((el) => (
+                          <li
+                            className="hover:underline cursor-pointer"
+                            onClick={() => {
+                              form.setValue("direction", el.display_name);
+                              if (el?.lat && el?.lon) {
+                                setPosition([Number(el.lat), Number(el.lon)]);
+                              }
+                            }}
+                            key={el.display_name}
+                          >
+                            {el.display_name}
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  ""
+                )}
+                <FormDescription>
+                  Seleccione su dirección de la lista
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type="submit">Enviar</Button>
+        </form>
+      </Form>
+    </section>
+  );
 }
