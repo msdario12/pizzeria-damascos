@@ -6,6 +6,11 @@ import "leaflet-defaulticon-compatibility";
 const MAPBOX_TOKEN =
   "pk.eyJ1IjoiZGFyaW8xOTk0IiwiYSI6ImNsbzJ1encwcTBjMGYya3Izc29oajYxZDkifQ.SMIN0mp7YSKPH7peOR39dA";
 
+const dimensions = {
+  width: 400,
+  height: 400,
+};
+
 const DirectionMap = ({ position }) => {
   console.log(position);
   if (!position) {
@@ -19,7 +24,7 @@ const DirectionMap = ({ position }) => {
         center={position}
         zoom={14}
         scrollWheelZoom={false}
-        style={{ height: "400px", width: "100%" }}
+        style={{ height: dimensions.height, width: "100%" }}
       >
         <TileLayer
           url={`https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/256/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`}

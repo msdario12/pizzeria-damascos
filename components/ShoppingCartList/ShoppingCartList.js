@@ -33,7 +33,7 @@ export default function ShoppingCartList({ cartList }) {
           </TableHeader>
           <TableBody>
             {cartList.map((el) => (
-            <TableRow>
+              <TableRow key={el.name + el.count}>
                 <TableCell className="font-medium">{el.name}</TableCell>
                 <TableCell>{el.count}</TableCell>
                 <TableCell className="text-right">

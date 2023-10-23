@@ -1,5 +1,4 @@
 import { Input } from "@/components/ui/input";
-import { Label } from "@radix-ui/react-label";
 import { Button } from "../ui/button";
 import {
   Select,
@@ -21,10 +20,7 @@ import * as Yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect, useState } from "react";
-import { InputWithSuggestions } from "./InputWithSuggestions";
-import { Popover, PopoverTrigger } from "@radix-ui/react-popover";
 import { Card, CardContent } from "../ui/card";
-import { Cross2Icon } from "@radix-ui/react-icons";
 
 const URL_GEO_API = "https://geocode.maps.co/search?";
 
@@ -78,26 +74,26 @@ export default function DirectionForm({ setPosition }) {
     const URL_API_DEP =
       "https://apis.datos.gob.ar/georef/api/departamentos?provincia=";
     // Check if the department list exist in localStorage
-    const departmentLocalStorage = localStorage.getItem("department-list");
+    const departmentLocalStorage = localStorage.getItem(
+      `department-list-${province}`
+    );
     if (!departmentLocalStorage) {
-      console.log("Realiza fetch");
       fetch(URL_API_DEP + province + "&orden=nombre&max=20")
         .then((res) => res.json())
         .then((json) => {
+          console.log(json);
           const names = json.departamentos.map((el) => {
-            return { nombre: el.nombre, id: el.id };
+            return { nombre: el.nombre, id: el.id, centroide: el.centroide };
           });
-          console.log(names);
           localStorage.setItem(
-            "department-list",
-            names.map((el) => JSON.stringify(el))
+            `department-list-${province}`,
+            JSON.stringify(names)
           );
           setDepartmentList(names);
         });
       return;
     }
-    console.log(departmentLocalStorage);
-    // setDepartmentList(departmentLocalStorage.map((el) => JSON.parse(el)));
+    setDepartmentList(JSON.parse(departmentLocalStorage));
   }
 
   function getDirectionSuggestionsBasedOnText(text) {
@@ -209,6 +205,14 @@ export default function DirectionForm({ setPosition }) {
                   onValueChange={(e) => {
                     field.onChange(e);
                     setDepartment(e);
+                    const selectedDepartment = departmentList.find(
+                      (el) => el.nombre === e
+                    );
+                    console.log(selectedDepartment);
+                    setPosition([
+                      Number(selectedDepartment.centroide.lat),
+                      Number(selectedDepartment.centroide.lon),
+                    ]);
                   }}
                   defaultValue={field.value}
                 >
@@ -220,12 +224,27 @@ export default function DirectionForm({ setPosition }) {
                   <SelectContent className="max-h-52 overflow-y-scroll">
                     {departmentList && (
                       <>
-                        {departmentList.map((dep) => (
-                          <SelectItem key={dep.id} value={dep.nombre}>
-                            {dep.nombre}
-                          </SelectItem>
-                        ))}
-                        <SelectItem value="load">Cargar más</SelectItem>
+                        {departmentList.map((dep, index) => {
+                          if (index === 0) {
+                            return (
+                              <SelectItem
+                                key={dep.id}
+                                value={dep.nombre}
+                                selected
+                              >
+                                {dep.nombre}
+                              </SelectItem>
+                            );
+                          }
+                          return (
+                            <SelectItem key={dep.id} value={dep.nombre}>
+                              {dep.nombre}
+                            </SelectItem>
+                          );
+                        })}
+                        <SelectItem selected value="load">
+                          Cargar más
+                        </SelectItem>
                       </>
                     )}
                   </SelectContent>
