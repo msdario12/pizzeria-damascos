@@ -42,7 +42,7 @@ export default function DirectionForm({ setPosition }) {
   const [department, setDepartment] = useState("Capital");
   const [directionSuggestions, setDirectionSuggestions] = useState([]);
   const [direction, setDirection] = useState("");
-  const [openSuggestions, setOpenSuggestions] = useState(true);
+  const [openSuggestions, setOpenSuggestions] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState("");
 
   function handleSubmit(data) {
@@ -131,9 +131,10 @@ export default function DirectionForm({ setPosition }) {
     }, 2500);
   }
   useEffect(() => {
-    console.log(direction);
+    setOpenSuggestions(true);
     if (direction.length === 0) {
       setDirectionSuggestions([{ display_name: "Ingresa una dirección" }]);
+      setOpenSuggestions(false);
       return;
     }
     if (direction.length <= 3) {
@@ -142,9 +143,11 @@ export default function DirectionForm({ setPosition }) {
       ]);
       return;
     }
+    setDirectionSuggestions([{ display_name: `Buscando ${direction}` }]);
+    console.log(direction);
     const timeoutID = setTimeout(() => {
       getDirectionSuggestionsBasedOnText(direction);
-    }, 2500);
+    }, 1500);
 
     return () => clearTimeout(timeoutID);
   }, [direction]);
@@ -276,7 +279,7 @@ export default function DirectionForm({ setPosition }) {
                   />
                 </FormControl>
                 {openSuggestions ? (
-                  <Card>
+                  <Card className="absolute w-full z-20 max-h-40 overflow-y-scroll">
                     <CardContent className="pb-1">
                       <ul className="my-6 ml-6 list-disc [&>li]:mt-2">
                         {directionSuggestions.map((el) => (
@@ -287,6 +290,7 @@ export default function DirectionForm({ setPosition }) {
                               if (el?.lat && el?.lon) {
                                 setPosition([Number(el.lat), Number(el.lon)]);
                               }
+                              setOpenSuggestions(false);
                             }}
                             key={el.display_name}
                           >
