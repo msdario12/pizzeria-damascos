@@ -109,7 +109,7 @@ export default function DirectionForm({ setPosition }) {
         console.log(json);
         if (json.length === 0) {
           setDirectionSuggestions([
-            { display_name: "No se encontraron resultados." },
+            { display_name: "No se encontraron resultados.", disabled: true },
           ]);
           return;
         }
@@ -133,17 +133,21 @@ export default function DirectionForm({ setPosition }) {
   useEffect(() => {
     setOpenSuggestions(true);
     if (direction.length === 0) {
-      setDirectionSuggestions([{ display_name: "Ingresa una dirección" }]);
+      setDirectionSuggestions([
+        { display_name: "Ingresa una dirección", disabled: true },
+      ]);
       setOpenSuggestions(false);
       return;
     }
     if (direction.length <= 3) {
       setDirectionSuggestions([
-        { display_name: "Ingresa por lo menos 4 letras" },
+        { display_name: "Ingresa por lo menos 4 letras", disabled: true },
       ]);
       return;
     }
-    setDirectionSuggestions([{ display_name: `Buscando ${direction}` }]);
+    setDirectionSuggestions([
+      { display_name: `Buscando ${direction}`, disabled: true },
+    ]);
     console.log(direction);
     const timeoutID = setTimeout(() => {
       getDirectionSuggestionsBasedOnText(direction);
@@ -284,8 +288,15 @@ export default function DirectionForm({ setPosition }) {
                       <ul className="my-6 ml-6 list-disc [&>li]:mt-2">
                         {directionSuggestions.map((el) => (
                           <li
-                            className="hover:underline cursor-pointer"
+                            className={
+                              !el.disabled
+                                ? `hover:underline cursor-pointer`
+                                : ""
+                            }
                             onClick={() => {
+                              if (el.disabled) {
+                                return;
+                              }
                               form.setValue("direction", el.display_name);
                               if (el?.lat && el?.lon) {
                                 setPosition([Number(el.lat), Number(el.lon)]);
