@@ -96,7 +96,7 @@ export default function DirectionForm({ setPosition }) {
         });
       return;
     }
-    console.log(departmentLocalStorage.map((el) => JSON.parse(el)));
+    console.log(departmentLocalStorage);
     // setDepartmentList(departmentLocalStorage.map((el) => JSON.parse(el)));
   }
 
