@@ -5,6 +5,7 @@ import {
   Popup,
   useMapEvent,
   useMapEvents,
+  useMap,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
@@ -21,9 +22,11 @@ const dimensions = {
 const DraggableMarker = ({ position }) => {
   const [location, setLocation] = useState(position);
   const markerRef = useRef(null);
+  const map = useMap();
   const eventHandlers = useMemo(
     () => ({
-      dragend() {
+      moveend(e) {
+        console.log("Movimiento", e);
         const marker = markerRef.current;
         if (marker != null) {
           const latLng = marker.getLatLng();
@@ -33,22 +36,37 @@ const DraggableMarker = ({ position }) => {
     }),
     []
   );
+  useMapEvents({
+    move(e) {
+      const center = map.getCenter();
+      const marker = markerRef.current;
+      if (!marker != null) {
+        marker.setLatLng(center);
+      }
+    },
+  });
+  const getUrlGeolocation = (lat, lon) => {
+    return `https://geocode.maps.co/reverse?lat=${lat}&lon=${lon}`;
+  };
 
   const getLocationByMarker = (location) => {
-    const [lat, long] = location;
-    console.log(lat);
+    const [lat, lon] = location;
+    fetch(getUrlGeolocation(lat, lon))
+      .then((res) => res.json())
+      .then((json) => console.log(json));
   };
 
   useEffect(() => {
-    const idTimeout = setTimeout(() => {
-      getLocationByMarker(location);
-    }, 1250);
-    return () => clearTimeout(idTimeout);
+    // const idTimeout = setTimeout(() => {
+    //   getLocationByMarker(location);
+    // }, 1250);
+    // return () => clearTimeout(idTimeout);
+    console.log("Effect");
   }, [location]);
 
   return (
     <Marker
-      draggable={true}
+      draggable={false}
       eventHandlers={eventHandlers}
       position={position}
       ref={markerRef}
@@ -80,14 +98,13 @@ const DirectionMap = ({ position }) => {
       <MapContainer
         center={position}
         zoom={14}
-        scrollWheelZoom={false}
+        scrollWheelZoom={true}
         style={{ height: dimensions.height, width: "100%" }}
       >
         <TileLayer
           url={`https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/256/{z}/{x}/{y}@2x?access_token=${MAPBOX_TOKEN}`}
           attribution='Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery &copy; <a href="https://www.mapbox.com/">Mapbox</a>'
         />
-        <LocationMarker />
         <DraggableMarker position={position} />
       </MapContainer>
     </div>
