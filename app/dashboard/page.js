@@ -1,6 +1,7 @@
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
 import pizzas from "@/exampleData";
+import NewPizzaForm from "./components/NewPizzaForm";
 async function getData() {
   // Fetch data from API here
   return [
@@ -17,6 +18,7 @@ export default function DashboardPage() {
   return (
     <main>
       <h1 className="text-3xl">Cambia los productos a mostrar al público</h1>
+      <NewPizzaForm />
       <div className="container mx-auto py-10">
         <DataTable columns={columns} data={pizzas} />
       </div>
