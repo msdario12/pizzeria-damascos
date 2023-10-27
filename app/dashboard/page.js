@@ -13,21 +13,6 @@ async function getData() {
   ];
 }
 
-const examplePizzas = [
-  {
-    name: "Pizza 1",
-    description: "Una linda pizzarda",
-    price: 2200,
-    img: "none",
-  },
-  {
-    name: "Pizza 2",
-    description: "Una casi buenarda pizzarda",
-    price: 2800,
-    img: "none",
-  },
-];
-
 export default function DashboardPage() {
   return (
     <main>
