@@ -27,7 +27,7 @@ const newPizzaSchema = Yup.object({
   name: Yup.string().required(),
   price: Yup.number().required(),
   description: Yup.string().required(),
-  img: Yup.string().required(),
+  img: Yup.string(),
 });
 
 export default function NewPizzaForm() {

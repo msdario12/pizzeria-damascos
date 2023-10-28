@@ -1,0 +1,13 @@
+GET www.google.com
+
+
+GET localhost:3000/api/pizzas
+
+
+POST localhost:3000/api/pizzas
+Content-Type: application/json
+{
+	"name": "test",
+	"description": "short test description",
+	"price": 1200,
+}
