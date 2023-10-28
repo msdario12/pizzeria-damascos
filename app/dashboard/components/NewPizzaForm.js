@@ -18,17 +18,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import * as Yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useEffect, useState } from "react";
-
-const newPizzaSchema = Yup.object({
-  name: Yup.string().required(),
-  price: Yup.number().required(),
-  description: Yup.string().required(),
-  img: Yup.string(),
-});
+import newPizzaSchema from "@/utils/schemas/newPizzaSchema";
 
 export default function NewPizzaForm() {
   const form = useForm({
@@ -119,9 +111,6 @@ export default function NewPizzaForm() {
                     {...field}
                   />
                 </FormControl>
-                <FormDescription>
-                  Se abrira una venta donde puede seleccionar la imagen a subir.
-                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
