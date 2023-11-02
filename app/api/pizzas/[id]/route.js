@@ -1,4 +1,7 @@
 import dbPizzas from "@/utils/db/mongo-client";
+import newPizzaSchema, {
+  updatedPizzaSchema,
+} from "@/utils/schemas/newPizzaSchema";
 import { ObjectId } from "mongodb";
 import { NextResponse } from "next/server";
 
@@ -22,5 +25,33 @@ export async function DELETE(req, { params }) {
   } catch (e) {
     console.error(e);
     return NextResponse.status(500).json({ error: e, status: "error" });
+  }
+}
+
+export async function PUT(req, { params }) {
+  try {
+    const id = params.id;
+    const body = updatedPizzaSchema.cast(await req.json());
+    try {
+      await updatedPizzaSchema.validate(body, { abortEarly: false });
+    } catch (e) {
+      return NextResponse.json({
+        status: "error",
+        name: e.name,
+        errors: e.errors,
+      });
+    }
+    const filter = { _id: new ObjectId(id) };
+    const updatedDoc = {
+      $set: body,
+    };
+    const result = await dbPizzas
+      .collection("damascos-collection")
+      .findOneAndUpdate(filter, updatedDoc);
+    console.log(result);
+    return NextResponse.json({ status: "ok", msg: "Actualizcion correcta." });
+  } catch (e) {
+    console.error(e);
+    return NextResponse.json({ error: e, status: "error" });
   }
 }

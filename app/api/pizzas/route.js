@@ -28,8 +28,8 @@ export async function POST(req) {
         errors: e.errors,
       });
     }
-    const { name, description, price } = body;
-    const newDocument = { name, description, price };
+    const { name, description, price, img } = body;
+    const newDocument = { name, description, price, img };
 
     const result = await dbPizzas
       .collection("damascos-collection")

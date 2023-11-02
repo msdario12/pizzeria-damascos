@@ -7,4 +7,11 @@ const newPizzaSchema = Yup.object({
   img: Yup.string().required(),
 });
 
+export const updatedPizzaSchema = Yup.object({
+  name: Yup.string(),
+  price: Yup.number(),
+  description: Yup.string(),
+  img: Yup.string(),
+});
+
 export default newPizzaSchema;

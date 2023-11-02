@@ -2,25 +2,32 @@ import { DataTable } from "./data-table";
 import { columns } from "./columns";
 import pizzas from "@/exampleData";
 import NewPizzaForm from "./components/NewPizzaForm";
+import dbPizzas from "@/utils/db/mongo-client";
 async function getData() {
   // Fetch data from API here
-  return [
-    {
-      name: "test",
-      id: "2",
-      description: "A nice test",
-      img: "https://www.google.com",
-    },
-  ];
+  try {
+    const pizzas = await dbPizzas
+      .collection("damascos-collection")
+      .find({})
+      .toArray();
+    const result = pizzas.map((pizza) => {
+      const newID = pizza._id.toString();
+      return { ...pizza, _id: newID };
+    });
+    return result;
+  } catch (e) {
+    console.error(e);
+  }
 }
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const data = await getData();
   return (
     <main>
       <h1 className="text-3xl">Cambia los productos a mostrar al público</h1>
       <NewPizzaForm />
       <div className="container mx-auto py-10">
-        <DataTable columns={columns} data={pizzas} />
+        <DataTable columns={columns} data={data} />
       </div>
     </main>
   );
