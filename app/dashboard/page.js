@@ -3,6 +3,7 @@ import { columns } from "./columns";
 import pizzas from "@/exampleData";
 import NewPizzaForm from "./components/NewPizzaForm";
 import dbPizzas from "@/utils/db/mongo-client";
+import { Toaster } from "@/components/ui/toaster";
 async function getData() {
   // Fetch data from API here
   try {
@@ -29,6 +30,7 @@ export default async function DashboardPage() {
       <div className="container mx-auto py-10">
         <DataTable columns={columns} data={data} />
       </div>
+      <Toaster />
     </main>
   );
 }

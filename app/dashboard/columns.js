@@ -1,5 +1,8 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
+import { Edit, X } from "lucide-react";
+import DeleteDialogConfirm from "./components/DeleteDialogConfirm";
 
 export const columns = [
   { accessorKey: "name", header: "Nombre" },
@@ -11,6 +14,7 @@ export const columns = [
     cell: (row) => {
       return (
         <img
+          className="w-8"
           src={
             row.row.original.img
               ? row.row.original.img
@@ -18,6 +22,21 @@ export const columns = [
           }
           alt="Test"
         />
+      );
+    },
+  },
+  {
+    accessorKey: "_id",
+    header: "Acciones",
+    cell: (row) => {
+      const id = row.getValue("_id");
+      return (
+        <div className="flex gap-2">
+          <Button>
+            <Edit size={17} />
+          </Button>
+          <DeleteDialogConfirm id={id} />
+        </div>
       );
     },
   },
