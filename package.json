@@ -40,6 +40,8 @@
   "devDependencies": {
     "@types/leaflet": "^1.9.7",
     "autoprefixer": "^10",
+    "eslint": "^8.52.0",
+    "eslint-plugin-react": "^7.33.2",
     "postcss": "^8",
     "tailwindcss": "^3"
   }

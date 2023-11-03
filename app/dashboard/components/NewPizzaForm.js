@@ -12,74 +12,22 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import newPizzaSchema from "@/utils/schemas/newPizzaSchema";
-import { useState } from "react";
 import { AlertCircle } from "lucide-react";
-import { revalidatePath } from "next/cache";
-import { revalidateCache } from "@/lib/actions";
+import { useState } from "react";
+import { createBase64Img } from "@/lib/utils";
 
-const createBase64Img = (file) => {
-  return new Promise((res, rej) => {
-    const fileReader = new FileReader();
-    fileReader.addEventListener("load", (e) => {
-      const base64Img = e.target.result;
-      res(base64Img);
-    });
-    fileReader.readAsDataURL(file);
-  });
-};
-
-export default function NewPizzaForm() {
-  const form = useForm({
-    resolver: yupResolver(newPizzaSchema),
-    defaultValues: {
-      name: "",
-      price: "",
-      description: "",
-      img: "",
-    },
-  });
-  const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState();
-
-  async function handleSubmit(data, e) {
-    const { name, description, price } = data;
-    const imgFile = e.target.img.files[0];
-    const base64Img = await createBase64Img(imgFile);
-    const newPizzaItem = { name, description, price, img: String(base64Img) };
-    const jsonPizza = JSON.stringify(newPizzaItem);
-    setIsLoading(true);
-    try {
-      const res = await fetch("/api/pizzas", {
-        method: "POST",
-        body: jsonPizza,
-      });
-      console.log(res);
-      if (!res.ok) {
-        throw new Error("Failed to submit the data. Please try again.");
-      }
-      setMessage({
-        status: "ok",
-        msg: "Item creado correctamente",
-      });
-    } catch (e) {
-      console.error(e);
-      setMessage({
-        status: "error",
-        msg: e,
-      });
-    } finally {
-      setIsLoading(false);
-      revalidateCache();
-      form.reset();
-    }
-  }
-
+export default function NewPizzaForm({
+  handleSubmit,
+  isLoading,
+  message,
+  form,
+}) {
+  const [imgSrc, setImgSrc] = useState();
   return (
-    <section>
-      <h1>Creación de un nuevo producto</h1>
+    <section className="flex">
+      <div>
+        <img src={imgSrc} alt="Vista previa de la imagen del item a subir." />
+      </div>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(handleSubmit)}
@@ -149,7 +97,13 @@ export default function NewPizzaForm() {
                   <Input
                     type="file"
                     placeholder="Selecciona una imagen que represente al producto"
-                    {...field}
+                    // {...field}
+                    value={field.value}
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      createBase64Img(file).then((res) => setImgSrc(res));
+                      field.onChange(e);
+                    }}
                   />
                 </FormControl>
                 <FormMessage />

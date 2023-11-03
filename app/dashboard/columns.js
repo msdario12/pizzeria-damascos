@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
 import { Edit, X } from "lucide-react";
 import DeleteDialogConfirm from "./components/DeleteDialogConfirm";
+import EditPizzaDialog from "./components/EditPizzaDialog";
 
 export const columns = [
   { accessorKey: "name", header: "Nombre" },
@@ -30,11 +31,10 @@ export const columns = [
     header: "Acciones",
     cell: (row) => {
       const id = row.getValue("_id");
+      const data = row.row.original;
       return (
         <div className="flex gap-2">
-          <Button>
-            <Edit size={17} />
-          </Button>
+          <EditPizzaDialog data={data} id={id} />
           <DeleteDialogConfirm id={id} />
         </div>
       );

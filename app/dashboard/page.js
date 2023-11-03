@@ -4,6 +4,7 @@ import pizzas from "@/exampleData";
 import NewPizzaForm from "./components/NewPizzaForm";
 import dbPizzas from "@/utils/db/mongo-client";
 import { Toaster } from "@/components/ui/toaster";
+import AddNewPizza from "./components/AddNewPizza";
 async function getData() {
   // Fetch data from API here
   try {
@@ -26,7 +27,7 @@ export default async function DashboardPage() {
   return (
     <main>
       <h1 className="text-3xl">Cambia los productos a mostrar al público</h1>
-      <NewPizzaForm />
+      <AddNewPizza />
       <div className="container mx-auto py-10">
         <DataTable columns={columns} data={data} />
       </div>
