@@ -18,7 +18,7 @@ import { useState } from 'react';
 import { updatedPizzaSchema } from '@/utils/schemas/newPizzaSchema';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
-import { createJSONFromForm } from '@/lib/utils';
+import { createBase64Img, createJSONFromForm } from '@/lib/utils';
 import { editPizzaAction } from '../_actions';
 
 export default function EditPizzaDialog({ data, id }) {
@@ -44,8 +44,9 @@ export default function EditPizzaDialog({ data, id }) {
 		// const jsonPizza = await createJSONFromForm(data, e);
 		setIsLoading(true);
 		try {
+			data.img = await createBase64Img(data.img);
+			console.dir(e.target.img.files);
 			const res = await editPizzaAction(id, data);
-			console.log(res);
 
 			if (!res.ok) {
 				throw new Error('Failed to submit the data. Please try again.');

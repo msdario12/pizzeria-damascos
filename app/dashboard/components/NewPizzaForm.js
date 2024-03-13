@@ -101,9 +101,10 @@ export default function NewPizzaForm({
 								<FormLabel>Imagen</FormLabel>
 								<FormControl>
 									<Input
+										name='img'
 										type='file'
 										placeholder='Selecciona una imagen que represente al producto'
-										// {...field}
+										{...field}
 										value={field.value}
 										onChange={(e) => {
 											const file = e.target.files[0];
