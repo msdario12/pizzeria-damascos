@@ -17,6 +17,22 @@ import { X } from 'lucide-react';
 
 export default function DeleteDialogConfirm({ id }) {
 	const { toast } = useToast();
+	const handleDeleteClick = () => {
+		deletePizzaAction(id).then((res) => {
+			if (!res.ok) {
+				console.log(res);
+				toast({
+					description:
+						'Hubo un error al querer eliminar el item, intente nuevamente o contacte con el administrador.',
+				});
+			} else {
+				toast({
+					description: 'Se elimino de forma correcta el item.',
+				});
+			}
+			revalidateCache();
+		});
+	};
 	return (
 		<AlertDialog>
 			<AlertDialogTrigger>
@@ -32,23 +48,7 @@ export default function DeleteDialogConfirm({ id }) {
 				</AlertDialogHeader>
 				<AlertDialogFooter>
 					<AlertDialogCancel>Cancelar</AlertDialogCancel>
-					<AlertDialogAction
-						onClick={() => {
-							deletePizzaAction(id).then((res) => {
-								if (!res.ok) {
-									console.log(res);
-									toast({
-										description:
-											'Hubo un error al querer eliminar el item, intente nuevamente o contacte con el administrador.',
-									});
-								} else {
-									toast({
-										description: 'Se elimino de forma correcta el item.',
-									});
-								}
-								revalidateCache();
-							});
-						}}>
+					<AlertDialogAction onClick={handleDeleteClick}>
 						Confirmar
 					</AlertDialogAction>
 				</AlertDialogFooter>

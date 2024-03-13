@@ -2,13 +2,17 @@
 import dbPizzas from '@/utils/db/mongo-client';
 import { ObjectId } from 'mongodb';
 
-export const deletePizzaAction = async ({ id }) => {
+export const deletePizzaAction = async (id) => {
 	try {
-		const query = { _id: new ObjectId(id.toString()) };
+		const objectId = new ObjectId(id);
+		if (objectId.toString() !== id) {
+			console.log('Error with id');
+			return 'Error with id';
+		}
+		const query = { _id: new ObjectId(id) };
 		const result = await dbPizzas
 			.collection('damascos-collection')
 			.deleteOne(query);
-		console.log(result);
 		if (result.deletedCount >= 1) {
 			result.ok = true;
 			return result;
