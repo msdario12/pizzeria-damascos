@@ -2,7 +2,7 @@ import { DataTable } from './data-table';
 import { columns } from './columns';
 import { Toaster } from '@/components/ui/toaster';
 import AddNewPizza from './components/AddNewPizza';
-import { getAllPizzas } from '../lib/data';
+import { getAllPizzas } from './_actions';
 
 export default async function DashboardPage() {
 	const data = await getAllPizzas();

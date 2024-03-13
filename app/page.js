@@ -1,7 +1,8 @@
 import Cart from '@/components/Cart/Cart';
 import ProductList from '@/components/ProductList/ProductList';
 import CartContext from '@/context/cartContext';
-import { getAllPizzas } from './lib/data';
+import { getAllPizzas } from './dashboard/_actions';
+
 export default async function Home() {
 	const data = await getAllPizzas();
 	return (
