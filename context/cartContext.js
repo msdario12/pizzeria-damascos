@@ -22,7 +22,6 @@ export const CartContext = ({ children }) => {
 				}
 			})
 		);
-		console.log(cartList);
 	};
 
 	const removeOneItemFromCart = (id) => {
