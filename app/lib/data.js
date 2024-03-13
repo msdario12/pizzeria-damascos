@@ -16,3 +16,14 @@ export async function getAllPizzas() {
 		console.error(e);
 	}
 }
+
+export async function removeOnePizza(id) {
+	try {
+		await dbPizzas.collection('damascos-collection').deleteOne({
+			_id: id,
+		});
+		return;
+	} catch (e) {
+		console.error(e);
+	}
+}

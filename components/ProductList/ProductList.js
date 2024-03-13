@@ -27,7 +27,8 @@ export default function ProductList({ data }) {
 						pizza={el}
 						removeItem={removeOneItemFromCart}
 						addItem={addOneItemToCart}
-						defineItem={defineCountOfItemToCart}></ProductCard>
+						defineItem={defineCountOfItemToCart}
+					/>
 				))}
 		</div>
 	);
