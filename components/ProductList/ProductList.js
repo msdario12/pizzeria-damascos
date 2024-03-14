@@ -16,7 +16,6 @@ export default function ProductList({ data }) {
 		]);
 		setCartList((prev) => prev.filter((el) => el.count > 0));
 	};
-	console.log(data);
 	return (
 		<div>
 			<h1 className='text-3xl font-bold mb-5'>Lista de variedades</h1>

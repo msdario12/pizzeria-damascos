@@ -20,7 +20,6 @@ export default function DeleteDialogConfirm({ id }) {
 	const handleDeleteClick = () => {
 		deletePizzaAction(id).then((res) => {
 			if (!res.ok) {
-				console.log(res);
 				toast({
 					description:
 						'Hubo un error al querer eliminar el item, intente nuevamente o contacte con el administrador.',

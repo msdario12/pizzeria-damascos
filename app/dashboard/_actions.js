@@ -16,14 +16,12 @@ export async function getAllPizzas() {
 			.find({})
 			.toArray();
 		const result = pizzas.map((pizza) => {
-			const newID = pizza._id.toString();
+			const newID = String(pizza._id.toString());
 			return { ...pizza, _id: newID };
 		});
 		return result;
 	} catch (e) {
 		console.error(e);
-	} finally {
-		dbClient.close();
 	}
 }
 
@@ -36,12 +34,10 @@ export const getPizzaByIdAction = async (id) => {
 			.findOne({
 				_id: new ObjectId(id),
 			});
-		onePizza._id = onePizza._id.toString();
+		onePizza._id = String(onePizza._id.toString());
 		return onePizza;
 	} catch (e) {
 		console.error(e);
-	} finally {
-		dbClient.close();
 	}
 };
 
@@ -66,8 +62,6 @@ export const deletePizzaAction = async (id) => {
 		}
 	} catch (e) {
 		console.error(e);
-	} finally {
-		dbClient.close();
 	}
 };
 
@@ -93,12 +87,11 @@ export const editPizzaAction = async (id, body) => {
 			.collection(collection)
 			.findOneAndUpdate(filter, updatedDoc);
 		result.ok = true;
+		result._id = result._id.toString();
 		return result;
 	} catch (e) {
 		result.ok = false;
 		console.error(e);
 		return result;
-	} finally {
-		dbClient.close();
 	}
 };

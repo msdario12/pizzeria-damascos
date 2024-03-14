@@ -29,7 +29,6 @@ export default function AddNewPizza() {
 				method: 'POST',
 				body: data,
 			});
-			console.log(res);
 			if (!res.ok) {
 				throw new Error('Failed to submit the data. Please try again.');
 			}
