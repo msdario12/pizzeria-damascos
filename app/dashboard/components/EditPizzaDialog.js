@@ -44,8 +44,10 @@ export default function EditPizzaDialog({ data, id }) {
 		// const jsonPizza = await createJSONFromForm(data, e);
 		setIsLoading(true);
 		try {
-			data.img = await createBase64Img(data.img);
-			console.dir(e.target.img.files);
+			if (data.img) {
+				const imgFile = e.target.img.files[0];
+				data.img = await createBase64Img(imgFile);
+			}
 			const res = await editPizzaAction(id, data);
 
 			if (!res.ok) {

@@ -1,5 +1,6 @@
-import { MongoClient } from "mongodb";
+import { MongoClient } from 'mongodb';
 
-const client = new MongoClient(process.env.MONGODB_URI);
-const dbPizzas = client.db("damascos-pizzas");
-export default dbPizzas;
+const dbClient = new MongoClient(process.env.MONGODB_URI);
+// const dbPizzas = dbClient.db('damascos-pizzas');
+
+export default dbClient;

@@ -1,14 +1,18 @@
 'use server';
 import { createBase64Img } from '@/lib/utils';
-import dbPizzas from '@/utils/db/mongo-client';
+import dbClient from '@/utils/db/mongo-client';
 import { updatedPizzaSchema } from '@/utils/schemas/newPizzaSchema';
 import { ObjectId } from 'mongodb';
+
+const dbName = process.env.DATABASE_NAME;
+const collection = process.env.COLLECTION_NAME;
 
 export async function getAllPizzas() {
 	// Fetch data from API here
 	try {
-		const pizzas = await dbPizzas
-			.collection('damascos-collection')
+		const pizzas = await dbClient
+			.db(dbName)
+			.collection(collection)
 			.find({})
 			.toArray();
 		const result = pizzas.map((pizza) => {
@@ -18,19 +22,26 @@ export async function getAllPizzas() {
 		return result;
 	} catch (e) {
 		console.error(e);
+	} finally {
+		dbClient.close();
 	}
 }
 
 export const getPizzaByIdAction = async (id) => {
 	// Fetch data from API here
 	try {
-		const onePizza = await dbPizzas.collection('damascos-collection').findOne({
-			_id: new ObjectId(id),
-		});
+		const onePizza = await dbClient
+			.db(dbName)
+			.collection(collection)
+			.findOne({
+				_id: new ObjectId(id),
+			});
 		onePizza._id = onePizza._id.toString();
 		return onePizza;
 	} catch (e) {
 		console.error(e);
+	} finally {
+		dbClient.close();
 	}
 };
 
@@ -43,8 +54,9 @@ export const deletePizzaAction = async (id) => {
 			return 'Error with id';
 		}
 		const query = { _id: new ObjectId(id) };
-		const result = await dbPizzas
-			.collection('damascos-collection')
+		const result = await dbClient
+			.db(dbName)
+			.collection(collection)
 			.deleteOne(query);
 		if (result.deletedCount >= 1) {
 			result.ok = true;
@@ -54,6 +66,8 @@ export const deletePizzaAction = async (id) => {
 		}
 	} catch (e) {
 		console.error(e);
+	} finally {
+		dbClient.close();
 	}
 };
 
@@ -74,8 +88,9 @@ export const editPizzaAction = async (id, body) => {
 		const updatedDoc = {
 			$set: body,
 		};
-		result = await dbPizzas
-			.collection('damascos-collection')
+		result = await dbClient
+			.db(dbName)
+			.collection(collection)
 			.findOneAndUpdate(filter, updatedDoc);
 		result.ok = true;
 		return result;
@@ -83,5 +98,7 @@ export const editPizzaAction = async (id, body) => {
 		result.ok = false;
 		console.error(e);
 		return result;
+	} finally {
+		dbClient.close();
 	}
 };
