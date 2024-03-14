@@ -13,17 +13,21 @@ export const columns = [
 		accessorKey: 'img',
 		header: 'Imagen',
 		cell: (row) => {
-			return (
-				<img
-					className='w-8'
-					src={
-						row.row.original.img
-							? row.row.original.img
-							: 'https://placehold.co/200x200.png'
-					}
-					alt='Test'
-				/>
-			);
+			if (row.row.original.img) {
+				return (
+					<img
+						className='w-8'
+						src={
+							row.row.original.img
+								? row.row.original.img
+								: 'https://placehold.co/200x200.png'
+						}
+						alt='Test'
+					/>
+				);
+			} else {
+				return '';
+			}
 		},
 	},
 	{
