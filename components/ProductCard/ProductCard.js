@@ -42,16 +42,16 @@ export default function ProductCard({
 		<Card className='pt-3 my-4'>
 			<CardContent className='flex items-center justify-between gap-x-5'>
 				<div className='flex flex-col gap-x-5 justify-between items-center '>
-					{img ? <Image src={img} width={200} height={200} /> : ''}
+					{img ? <Image src={img} className='w-64 object-cover h-24' width={200} height={200} /> : ''}
 					<div className='flex gap-x-4  items-center mt-5'>
 						<Button onClick={handleMinusItem}>-</Button>
 						<span className='font-bold'>{countProduct}</span>
 						<Button onClick={handlePlusItem}>+</Button>
 					</div>
 				</div>
-				<div>
+				<div className='text-right'>
 					<h2 className='font-semibold text-xl'>{name}</h2>
-					<p className='text-sm my-2'>{description}</p>
+					<p className='text-sm my-2 hidden sm:block'>{description}</p>
 					<span className='text-2xl font-bold'>{'$ ' + price}</span>
 				</div>
 			</CardContent>
