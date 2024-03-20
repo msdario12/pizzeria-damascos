@@ -41,8 +41,8 @@ export default function ProductCard({
 	return (
 		<Card className='pt-3 my-4'>
 			<CardContent className='flex items-center justify-between gap-x-5'>
-				<div className='flex flex-col gap-x-5 justify-between items-center '>
-					{img ? <Image src={img} className='w-64 object-cover h-24' width={200} height={200} /> : ''}
+				<div className='flex flex-col gap-x-5 justify-between items-center w-40'>
+					{img ? <Image src={img} className='w-full object-cover h-24' width={200} height={200} /> : ''}
 					<div className='flex gap-x-4  items-center mt-5'>
 						<Button onClick={handleMinusItem}>-</Button>
 						<span className='font-bold'>{countProduct}</span>
