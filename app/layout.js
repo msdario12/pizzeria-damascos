@@ -20,7 +20,7 @@ export default function RootLayout({ children }) {
 					grayColor='sand'
 					radius='large'
 					scaling='95%'>
-					<CartContext>{children}</CartContext>
+					{children}
 				</Theme>
 			</body>
 		</html>

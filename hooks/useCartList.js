@@ -1,5 +1,5 @@
 "use client";
-import CartContext, { CartData } from "@/context/cartContext";
+import  { CartData } from "@/context/cartContext";
 import { useContext } from "react";
 
 const useCartList = () => {

@@ -4,18 +4,23 @@ import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
 import useCartList from "@/hooks/useCartList";
 import Link from "next/link";
+
+
+
 export default function Cart() {
   const [totalPrice, setTotalPrice] = useState(0);
-  const { cartList, setCartList } = useCartList();
+  const { cartList  } = useCartList();
 
   useEffect(() => {
-    if (cartList.length >= 0) {
+    if (cartList) {
       setTotalPrice(
         cartList.reduce(
           (acc, current) => acc + current.price * current.count,
           0
         )
       );
+    } else {
+      setTotalPrice(0)
     }
   }, [cartList]);
 
@@ -23,9 +28,12 @@ export default function Cart() {
     const searchParams = new URLSearchParams("");
     // searchParams.append("test", "prueba");
     // searchParams.append("list", cartList);
+    if (cartList)
+  {
     cartList.forEach((item, index) =>
       searchParams.append(index, JSON.stringify(item))
     );
+    }
     return searchParams.toString();
   };
 
